@@ -10,7 +10,7 @@ void printReceipt(double TotalPrice,int Load,char Code);			//function 3
 
 
 int main(){
-
+  string input;
 	char Code, proceed;
 	int Load;
     double BasePrice, TotalPrice;
@@ -21,7 +21,7 @@ int main(){
     cout << "=======" << "Triple-A Smart laundry" << "=======" << endl;
     cout << "W"<< setw(3) << "-Washing (RM6.00)" << endl;
     cout << "D"<< setw(3) << "-Dry only (RM5.00)" << endl;
-    cout << "B"<< setw(3) << "-Washing and Dry (RM10.00)" << endl;
+    cout << "WD(B)"<< setw(3) << "-Washing and Dry (RM10.00)" << endl;
 
     BasePrice = calcPrice(Code,Load);				 	//calculating the base price
     
@@ -66,7 +66,15 @@ double calcPrice(char &Code,int &Load){		//use & in front of var to pass it by r
     
     do{
     cout<<"\nEnter service code: ";
-	cin >> Code;
+	cin >> input;
+
+if(input=="W"||"w"){
+code='W';}
+else if(input=="D"||"d"){
+code='D';}
+else if(input=="WD"){
+code='B';
+
     Code=toupper(Code); // to make sure code is upper alphabet ,source:W3school.com
 
     switch (Code)
