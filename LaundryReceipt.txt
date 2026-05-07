@@ -1,0 +1,5 @@
+====== Triple-A Laundry Receipt ======
+Service: Washing and Dry
+Total Price: RM 24.38
+Number of Loads: 2
+======================================
