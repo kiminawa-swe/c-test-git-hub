@@ -1,0 +1,181 @@
+#include <iostream>
+#include <iomanip>
+#include <fstream> 
+#include <string>
+using namespace std;
+
+double calcPrice(char &Code,int &Load);								//function 1
+double addExtra(double BasePrice,int Load);									//function 2
+void printReceipt(double TotalPrice,int Load,char Code);			//function 3
+
+
+int main(){
+  
+	char Code, proceed;
+	int Load;
+    double BasePrice, TotalPrice;
+    bool running = false;
+    bool next = false;
+    
+	do {
+    cout << "=======" << "Triple-A Smart laundry" << "=======" << endl;
+    cout << "W"<< setw(3) << "-Washing (RM6.00)" << endl;
+    cout << "D"<< setw(3) << "-Dry only (RM5.00)" << endl;
+    cout << "WD(B)"<< setw(3) << "-Washing and Dry (RM10.00)" << endl;
+
+    BasePrice = calcPrice(Code,Load);				 	//calculating the base price
+    
+    TotalPrice = addExtra(BasePrice,Load);					//calculating the total price
+
+    cout << "Total price : RM " << fixed << setprecision(2) << TotalPrice << endl;
+
+    printReceipt(TotalPrice,Load,Code);				 	//printing the receipt into a file
+    cout << "Kindly check your file to see receipt.\n\n";
+	
+	do{
+	cout << "Proceed to next customer (Y/N): ";
+	cin >> proceed;
+    proceed=toupper(proceed); 
+    
+    switch (proceed)
+    {
+    	case 'N':	cout << "\nThank you ! see you again ;)" << endl;
+    				next = true;
+        			running = true;
+        			break;
+        case 'Y':	next = true;
+					running = false;
+					break;
+        default :	cout << "Enter the right code !" << endl;
+        			next = false;
+    				running = false;
+    				break;
+	}	
+	}while(!next);
+
+	}while(!running);
+	return 0;
+}
+
+//function 1 definition
+double calcPrice(char &Code,int &Load){		//use & in front of var to pass it by reference in the main function, source:medium.com
+string input;
+    double price = 0;
+    double BasePrice;
+    bool isValid = false;
+    
+    do{
+    cout<<"\nEnter service code: ";
+	cin >> input;
+
+if((input=="W")||(input=="w")){
+Code='W';}
+else if((input=="D")||(input=="d")){
+Code='D';}
+else if((input=="WD")||(input=="wd")||(input=="Wd")||(input=="wD")){
+Code='B';}
+
+
+
+    //Code=toupper(Code); // to make sure code is upper alphabet ,source:W3school.com
+
+    switch (Code)
+    {
+    case 'W':	price = 6.00;
+        		isValid = true;
+        		break;
+    case 'D':	price = 5.00;
+    			isValid = true;
+        		break;
+    case 'B':	price = 10.00;
+    			isValid = true;
+        		break;
+    
+    default:	cout << "Enter correct code. " << endl;
+        		isValid = false;
+        		break;
+    }  
+    
+	bool validLoad=false;
+	cout << "Number of Loads : ";
+
+	do{
+		if(!(cin >> Load)){ 
+			cin.clear();  // clear the error buffer
+			cin.ignore(); //clear the error key type by user for eg( string, char,etc)
+
+			cout<<"enter correct load: "<<endl;
+			//cin>>Load;
+			validLoad=false;
+			
+
+		}
+		else{
+			validLoad=true;
+		}
+	
+	}while(!validLoad);
+
+		
+
+		isValid=true;
+		
+	}while(!isValid);
+	
+    return price*Load; //this is BasePrice
+}
+
+//function 2 definition
+double addExtra(double BasePrice,int Load){
+
+    char choice;
+    double TaxPrice;
+    bool isValid = false;
+    
+ 	do {
+    cout << "Add detergent? (Y/N): ";
+	cin >> choice;
+    choice=toupper(choice);
+
+	switch (choice)
+	{
+	case 'Y':	TaxPrice = (BasePrice+(1.5*Load))*1.06;
+    			isValid = true;
+    			break;
+	case 'N':	isValid = true;
+    			TaxPrice = BasePrice*1.06;
+    			break;
+	default:	cout << "Wrong code!" << endl;
+    			isValid = false;
+    			break;
+	}	
+	}while (!isValid);   
+    return TaxPrice;
+}
+
+void printReceipt(double TotalPrice,int Load,char Code){
+	
+	string service = " ";
+	Code=toupper(Code);
+	
+	switch (Code)
+	{
+	case 'W':	service = "Washing";
+    			break;
+	case 'D':	service = "Dry-Only";
+    			break;
+	case 'B':	service = "Washing and Dry";
+    			break;
+	default:	break;
+	}
+	
+	ofstream outFile("LaundryReceipt.txt");
+
+	outFile << "====== Triple-A Laundry Receipt ======" << endl;
+	outFile << "Service: " << service << endl;
+	outFile << "Total Price: RM " << fixed << setprecision(2) << TotalPrice << endl;
+	outFile << "Number of Loads: " << Load << endl;
+	outFile << "======================================" << endl;
+
+	outFile.close();
+}
